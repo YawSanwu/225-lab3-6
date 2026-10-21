@@ -1,49 +1,51 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dev-deployment
+  name: sanwuya-lab3-6-dev-deployment
 spec:
-  replicas: 1  # Number of NGINX pods to run
+  replicas: 1
   selector:
     matchLabels:
-      app: nginx
+      app: sanwuya-lab3-6-dev
   template:
     metadata:
       labels:
-        app: nginx
+        app: sanwuya-lab3-6-dev
     spec:
       containers:
-      - name: nginx
-        image: cithit/roseaw:latest            #<-------------change this!!!!
-        ports:
-        - containerPort: 80  # Expose NGINX on port 80        
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: nginx
-spec:
-  rules: 
-  - host: 
-    http:
-      paths:
-      - path: /
-        pathType: ImplementationSpecific
-        backend: 
-          service:
-            name: dev-service
-            port:
-              number: 80
+        - name: nginx
+          image: cithit/sanwuya:latest
+          ports:
+            - containerPort: 80
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: dev-service
+  name: sanwuya-lab3-6-dev-service
 spec:
+  type: ClusterIP
   selector:
-    app: nginx
+    app: sanwuya-lab3-6-dev
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
+    - protocol: TCP
+      port: 80
+      targetPort: 80
 
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sanwuya-lab3-6-dev-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /lab3-6
+            pathType: Prefix
+            backend:
+              service:
+                name: sanwuya-lab3-6-dev-service
+                port:
+                  number: 80
